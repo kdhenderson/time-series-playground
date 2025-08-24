@@ -1,0 +1,199 @@
+---
+title: "textbookNotes_ch01"
+author: "Kristin Henderson"
+date: "2025-08-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tswge)
+```
+
+## Time Series Objects and Plotting Time Series Data
+
+### Average monthly temperatures in DFW from 1900 through 2020
+```{r}
+# access the data
+data(dfw.2011)
+dfw.2011
+
+# plot a scatterplot
+plot(dfw.2011)
+
+# connect the dots indexed by time points 
+plot(dfw.2011, type='l')
+
+# create a ts object starting at January 2011, with montly data
+dfw.2011.ts = ts(dfw.2011, start=c(2011,1), frequency=12)
+dfw.2011.ts
+
+# plot the ts data with accurate date information
+plot(dfw.2011.ts)
+
+# compare the objects classes 
+class(dfw.2011.ts)
+class(dfw.2011)
+```
+
+### Lynx dataset
+```{r}
+data(lynx)
+plot(lynx)
+class(lynx)
+
+# view what is stored in the ts object, each observation represents a year (frequency=1)
+lynx
+```
+
+### More about ts objects
+```{r}
+# extract vector data from a ts object
+dfw.2011.num = as.numeric(dfw.2011.ts)
+class(dfw.2011.num)
+dfw.2011.num
+```
+
+### Default formats for creating a ts object
+```{r}
+x = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170)
+
+# construct a ts object from this vector assuming monthly data starting June 2018
+xTSmonth = ts(x, start=c(2018,6), frequency=12)
+xTSmonth
+
+# construct a ts object from this vector assuming quarterly data starting in the 3rd quarter of 1986
+xTSquarter = ts(x, start=c(1986,3), frequency=4)
+xTSquarter
+```
+
+### More on creating a ts object
+```{r}
+x = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170)
+
+# construct a ts object from this vector assuming daily data, weekly time units
+# first observation is the 4th day for the first week
+xTSweek = ts(x, start=c(1,4), frequency=7)
+xTSweek
+
+# work with only a subset of a ts object, here the 2nd week
+window(xTSweek, start=c(2,1), end=c(2,7))
+
+# subset the AirPassengers data to only number of passengers during 1950
+window(AirPassengers, start=c(1950,1), end=c(1950,12))
+```
+
+### The plotts.wge function in tswge
+```{r}
+data(lynx)
+
+# log the data (peaks are more variable than the troughs)
+log.lynx=log(lynx)
+
+plotts.wge(log.lynx)
+class(log.lynx)
+log.lynx
+```
+`plotts.wge` includes data values as points if the realization length is less than or equal to 200.
+
+```{r}
+# get help on the function
+?plotts.wge
+```
+
+```{r}
+# modified plot appearance
+plotts.wge(log.lynx, style=1, xlab='Date', ylab='Logarithm of Lynx Data',
+           main='Natural Logarithm of Number of Lynx Trapped from 1821 to 1934', text_size=12)
+```
+
+### Loading time series data from a csv
+```{r}
+# get help on the function
+AirPassengersData=read.csv("https://raw.githubusercontent.com/BivinSadler/Time-Series-for-Data-Science/refs/heads/main/Data/AirPassengers.csv", header=TRUE)
+
+# alternate method to avoid hard-coding the filepath
+# AirPassengerData=read.csv(file.choose(), header=TRUE)
+
+# check the first 10 rows
+head(AirPassengersData, n=10)
+```
+
+### Loading time series data from a txt with the `scan` function
+```{r}
+s1=scan('https://raw.githubusercontent.com/BivinSadler/Time-Series-for-Data-Science/refs/heads/main/Data/Sample1.txt')
+s2=scan('https://raw.githubusercontent.com/BivinSadler/Time-Series-for-Data-Science/refs/heads/main/Data/Sample2.txt')
+
+# you can also use file.choose
+# scan(file.choose())
+
+s1
+s2
+```
+
+### Some sources of time series data
+(1) FRED: The Federal Reserve Economic Database https://fred.stlouisfed.org
+(2) Silso: Sunspot Index and Long-Term Solar Observations www.sidc.oma.be/silso/  
+(3) Yahoo! Finance https://finance.yahoo.com/ (Appears to require a subscription now.)
+(4) National Weather Service www.weather.gov  
+(5) New York City Taxi & Limousine website https://www1.nyc.gov/site/tlc/about/about-tlc.page
+(6) https://census.gov
+(7) https://epa.gov 
+
+```{r}
+# https://fred.stlouisfed.org/series/POILWTIUSDM
+WTI = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/POILWTIUSDM.csv', header=TRUE)
+wtcrude2020 = ts(WTI$POILWTIUSDM, start=c(1990,1), end=c(2020,12), frequency=12)
+
+# Base R plot.ts will automatically show years for monthly data:
+plot(wtcrude2020, xlab="Year", ylab="Price", main="WTI Crude Oil Price")
+
+# modified plot appearance
+plotts.wge(wtcrude2020, style=1, xlab='Year', ylab="Price", main="WTI Crude Oil Price", text_size=12)
+```
+
+```{r}
+# https://fred.stlouisfed.org/series/MEDDAYONMARUS
+MedDays = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/MEDDAYONMARUS.csv', header=TRUE)
+MedDays.ts = ts(MedDays$MEDDAYONMARUS, start=c(2016,7), end=c(2021,4), frequency=12)
+plotts.wge(MedDays.ts)
+
+plot(MedDays.ts, xlab="Year", ylab="Days on Market", main="Housing Inventory: Median Days on Market in the United States")
+```
+
+```{r}
+# https://www.sidc.be/SILSO/datafiles
+# uses semi-colon delimiter
+ss = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/SN_y_tot_V2.0.csv', ';', header=FALSE)
+
+str(ss)
+
+#second column called 'V2' contains the sunspot numbers
+sunspot2.0 = ts(ss$V2, start=1700, end=2020, frequency=1)
+plotts.wge(sunspot2.0)
+
+plot(sunspot2.0, xlab="Year", ylab="Sunspots", main="Yearly Mean Total Sunspot Number")
+
+ss.month = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/SN_m_tot_V2.0.csv', ';', header=FALSE)
+
+str(ss.month)
+
+#fourth column called 'V4' contains the sunspot numbers
+sunspot2.0.month = ts(ss.month$V4, start=c(1749,1), end=c(2020,12), frequency=12)
+plotts.wge(sunspot2.0.month)
+
+plot(sunspot2.0.month, xlab="Year", ylab="Sunspots", main="Yearly Mean Total Sunspot Number")
+```
+
+```{r}
+# get help on the function
+?plotts.wge
+
+SN_y_tot_V2.0
+```
+
+
+```{r}
+
+```

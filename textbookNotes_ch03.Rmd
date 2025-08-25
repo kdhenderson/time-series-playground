@@ -1,0 +1,42 @@
+---
+title: "textbookNotes_ch03"
+author: "Kristin Henderson"
+date: "2025-08-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tswge)
+```
+
+### Basic R Commands
+```{r}
+data(AirPassengers)
+data(lynx)
+
+# mean
+mean.air = mean(AirPassengers)
+mean.air
+
+# variance
+var.air = var(AirPassengers)
+var.air
+
+# standard deviation
+sd.air = sd(AirPassengers)
+sd.air
+
+# calculate (and optionally plot) sample autocorrelations
+aut = acf(x=lynx, lag.max=25)
+aut
+
+# type='correlation' -> default
+#     ='covariance'
+#     ='partial'
+
+# plot=TRUE -> default
+```
+
+###

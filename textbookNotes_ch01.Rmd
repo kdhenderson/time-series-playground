@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tswge)
+library(dplyr) # for wrangling and cleaning
 ```
 
 ## Time Series Objects and Plotting Time Series Data
@@ -143,7 +144,7 @@ s2
 
 ```{r}
 # https://fred.stlouisfed.org/series/POILWTIUSDM
-WTI = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/POILWTIUSDM.csv', header=TRUE)
+WTI = read.csv('../data/textbook_data/POILWTIUSDM.csv', header=TRUE)
 wtcrude2020 = ts(WTI$POILWTIUSDM, start=c(1990,1), end=c(2020,12), frequency=12)
 
 # Base R plot.ts will automatically show years for monthly data:
@@ -155,7 +156,7 @@ plotts.wge(wtcrude2020, style=1, xlab='Year', ylab="Price", main="WTI Crude Oil 
 
 ```{r}
 # https://fred.stlouisfed.org/series/MEDDAYONMARUS
-MedDays = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/MEDDAYONMARUS.csv', header=TRUE)
+MedDays = read.csv('../data/textbook_data/MEDDAYONMARUS.csv', header=TRUE)
 MedDays.ts = ts(MedDays$MEDDAYONMARUS, start=c(2016,7), end=c(2021,4), frequency=12)
 plotts.wge(MedDays.ts)
 
@@ -165,7 +166,7 @@ plot(MedDays.ts, xlab="Year", ylab="Days on Market", main="Housing Inventory: Me
 ```{r}
 # https://www.sidc.be/SILSO/datafiles
 # uses semi-colon delimiter
-ss = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/SN_y_tot_V2.0.csv', ';', header=FALSE)
+ss = read.csv('../data/textbook_data/SN_y_tot_V2.0.csv', ';', header=FALSE)
 
 str(ss)
 
@@ -175,7 +176,7 @@ plotts.wge(sunspot2.0)
 
 plot(sunspot2.0, xlab="Year", ylab="Sunspots", main="Yearly Mean Total Sunspot Number")
 
-ss.month = read.csv('/Users/kdhenderson/Desktop/currentDesktop/SMU/ds6373_timeseries/data/textbook_data/SN_m_tot_V2.0.csv', ';', header=FALSE)
+ss.month = read.csv('../data/textbook_data/SN_m_tot_V2.0.csv', ';', header=FALSE)
 
 str(ss.month)
 
@@ -187,13 +188,138 @@ plot(sunspot2.0.month, xlab="Year", ylab="Sunspots", main="Yearly Mean Total Sun
 ```
 
 ```{r}
-# get help on the function
-?plotts.wge
+# Datasets obtained here: https://www.weather.gov/fwd/dmotemp
+data(dfw.mon)
+data(dfw.yr)
 
-SN_y_tot_V2.0
+plot(dfw.mon, xlab='Year', ylab='Degrees (F)', main='DFW Monthly Temperatures')
+plot(dfw.yr, xlab='Year', ylab='Degrees (F)', main='DFW Yearly Temperatures')
+```
+
+```{r}
+# Dataset obtained here with signficant data manipulation: https://www.nyc.gov/site/tlc/about/about-tlc.page
+data(yellowcab.precleaned)
+class(yellowcab.precleaned)
+plot(yellowcab.precleaned, xlab='Year', ylab='Monthly Yellow Cab Trips')
+```
+
+```{r}
+data(ozona)
+ozona.ts=ts(ozona$CFS_Sold)
+plot(ozona.ts, type = "o", pch = 16, cex = 0.7, col = "black",
+     xlab = "Day", ylab = "Ozone")
 ```
 
 
-```{r}
+## Preparing Time Series Data for Analysis: Cleaning, Wrangling, Imputation
 
+### Missing Data
+```{r}
+data(bitcoin)
+?bitcoin
+
+str(bitcoin)
+
+# indexes of NAs
+which(is.na(bitcoin))
+
+plot(bitcoin, type = "l", xlab = "Day", ylab = "Value",
+     main = "Bitcoin (missing times marked in red)")
+if (any(is.na(bitcoin))) {
+  # mark missing times along the x-axis
+  rug(time(bitcoin)[is.na(bitcoin)], col = "red", lwd = 2)
+}
+
+plot(bitcoin[150:180], type = "o", pch = 16, cex = 0.7, xlab = "Day", ylab = "Value",
+     main = "Bitcoin (zoomed in around missing values)")
+```
+
+### Imputation
+
+Two simple approaches to impute missing data in a time series are:
+
+- Last Observation Carried Forward (LOCF): Set $x_t = x_{t-1}$ where $x_{t-1}$ is the previous data value which is known.
+- Linear interpolation: Conceptually draw a straight line connecting the known values on each side of the missing value, $x_{t-1}$ and $x_{t+1}$. Then assign $x_t$ to be the value on the line at time $t$.
+
+### Linear interpolation
+```{r}
+# with one missing value
+bitcoin[161]
+bitcoin[163]
+bitcoin[162] = bitcoin[161] + (bitcoin[163]-bitcoin[161])/2
+bitcoin[162]
+
+# with tow adjacent missing values
+bitcoin[164]
+bitcoin[167]
+bitcoin[165] = bitcoin[164] + (bitcoin[167]-bitcoin[164])/3
+bitcoin[166] = bitcoin[164] + 2*(bitcoin[167]-bitcoin[164])/3
+bitcoin[164:167]
+
+plot(bitcoin[150:180], type = "o", pch = 16, cex = 0.7, xlab = "Day", ylab = "Value",
+     main = "Bitcoin (zoomed in around imputed values)")
+```
+
+```{r}
+# read the data in with the scan function
+dfw.mon = scan('../data/textbook_data/dallastemp.txt')
+
+# convert to a ts file
+dfw.mon = ts(dfw.mon, start=c(1900,1), frequency=12)
+
+# calculate the annual data using the aggregate command
+dfw.yr=aggregate(dfw.mon,FUN=mean)
+
+head(dfw.mon)
+dfw.yr
+```
+
+### Data cleaning and wrangling
+```{r}
+NYCabRaw = read.csv('../data/textbook_data/data_reports_monthly.csv', header=TRUE)
+head(NYCabRaw)
+names(NYCabRaw) # column names
+NYCabNew %>% count(License.Class)
+```
+
+#### Wrangling
+```{r}
+# select Month.Year, License.Class, Trips.Per.Day columns
+NYCabNew = NYCabRaw %>% select(c(Month.Year, License.Class, Trips.Per.Day))
+head(NYCabNew)
+
+# filter to contain only the Yellow taxicabs
+NYCabNew = NYCabNew %>% filter(License.Class == 'Yellow')
+head(NYCabNew)
+tail(NYCabNew)
+```
+
+#### Cleaning
+```{r}
+# delete the comma from the Trips.Per.Day column
+
+class(NYCabNew$Trips.Per.Day)
+
+# finds a pattern and replaces it with a character value in the given data
+NoCommaTrips = sub(',', '', NYCabNew$Trips.Per.Day)
+
+# cast to a numeric value
+NoCommaTrips = as.numeric(NoCommaTrips)
+
+NoCommaTrips
+```
+
+#### More wrangling
+```{r}
+# reversing the Trips.Per.Day column to reorder from earliest to latest date
+NoCommaTrips = rev(NoCommaTrips)
+NoCommaTrips
+
+# subsetting to include only data from Jan 2019 to Dec 2020
+# first create ts object to enable use of the window function
+NYCabNewts = ts(NoCommaTrips, start=c(2010,1), frequency=12)
+NYCabNewtsShort = window(NYCabNewts, start=c(2019,1), end=c(2020,12))
+NYCabNewtsShort
+
+plotts.wge(NYCabNewtsShort, xlab='Data', ylab='Monthly Yellow Taxi Trips')
 ```

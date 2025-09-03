@@ -5,16 +5,21 @@ date: "2025-08-26"
 output: html_document
 ---
 
+This review is based on the book: https://r4ds.hadley.nz/
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
+# install.packages("ggthemes")
+# install.packages("palmerpenguins")
 library(tidyverse)
+library(palmerpenguins)
+library(ggthemes)
 ```
 
 ## Data Viz Basics
 
 ```{r}
-mpg
+penguins
 ```
 
 ```{r}

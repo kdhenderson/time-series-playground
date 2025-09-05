@@ -23,34 +23,44 @@ penguins
 ```
 
 ```{r}
-?mpg
+?penguins
 ```
 
-Do cars with big engines use more fuel?
+Motivating question:
+What does the relationship between flipper length and body mass look like?
+
+Create an empty graph
 ```{r}
-ggplot(data = mpg) +  # create a coordinate system
-  geom_point(mapping = aes(x = displ, y = hwy))  # add a scatterplot layer to it
+ggplot(data = penguins)
 ```
 
+Define how variables are mapped to the visual properties (aesthetics) of the plot. For now, just map variables to the x and y aesthetics.
 ```{r}
-ggplot(data = mpg)
-
-nrow(mpg)
-ncol(mpg)
-dim(mpg)
-
-ggplot(data = mpg) +
-  geom_point(mapping = (aes(x=cyl, y=hwy)))
-
-ggplot(data = mpg) +
-  geom_point(mapping = (aes(x=drv, y=class)))
+ggplot(data = penguins, 
+       mapping = aes(x = flipper_length_mm, y = body_mass_g))
 ```
 
+Now articulate how to represent the observations on the plot by defining a geom (geometrical object).
 ```{r}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) + 
+  geom_point()
 ```
 
 ```{r}
-
+library(tswge)
+walmart = read.csv(file.choose(), header = TRUE)
+Stor8Item1 = walmart %>% filter(item == 1 & store == 8)
+head(walmart)
+plotts.wge(Stor8Item1$sales)
+acf(Stor8Item1$sales)
 ```
+
+```{r}
+#truncation 400
+acf(Stor8Item1$sales)
+parzen.wge(walmart$sales)
+```
+

@@ -50,6 +50,14 @@ ggplot(
 ```
 
 ```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y=body_mass_g, color = species)
+) + 
+  geom_point()
+```
+
+```{r}
 library(tswge)
 walmart = read.csv(file.choose(), header = TRUE)
 Stor8Item1 = walmart %>% filter(item == 1 & store == 8)

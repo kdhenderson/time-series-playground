@@ -49,12 +49,33 @@ ggplot(
   geom_point()
 ```
 
-```{r}
+When a categorical variable is mapped to an aesthetic, scaling is implemented. ggplot2 automatically assignes a unique value of the aesthetic (here a color) to the variable and by default adds a legend.
+```{r warning=FALSE, message=FALSE}
 ggplot(
   data = penguins,
   mapping = aes(x = flipper_length_mm, y=body_mass_g, color = species)
 ) + 
   geom_point()
+```
+
+Add a smooth curve that displays the relationship between x and y. When aesthetic mappings are defined in ggplot(), they are assigned at the global level and get passed down to each subsequent geom layer.
+```{r warning=FALSE, message=FALSE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species) 
+  ) +
+    geom_point() + 
+    geom_smooth(method = 'lm')
+```
+
+This time add the aesthetic mapping for colored points at the local level.
+```{r warning=FALSE, message=FALSE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species)) + 
+  geom_smooth(method = 'lm')
 ```
 
 ```{r}

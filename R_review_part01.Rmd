@@ -78,6 +78,16 @@ ggplot(
   geom_smooth(method = 'lm')
 ```
 
+Map to a shape aesthetic in addition to color.
+```{r warning=FALSE, message=FALSE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = 'lm')
+```
+
 ```{r}
 library(tswge)
 walmart = read.csv(file.choose(), header = TRUE)

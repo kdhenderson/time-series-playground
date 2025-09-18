@@ -106,6 +106,25 @@ ggplot(
   scale_color_colorblind()
 ```
 
+A more concise way to write ggplot2 code:
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point()
+```
+
+And using the pipe:
+```{r message=F, warning=F}
+penguins %>% 
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point()
+```
+
+Visualizing the distribution of a categorical variable using a bar chart:
+```{r}
+ggplot(penguins, aes(x = species)) + 
+  geom_bar()
+```
+
 ```{r}
 library(tswge)
 walmart = read.csv(file.choose(), header = TRUE)

@@ -125,6 +125,32 @@ ggplot(penguins, aes(x = species)) +
   geom_bar()
 ```
 
+Transform variable to a factor to reorder the levels for plotting.
+```{r}
+ggplot(penguins, aes(x = fct_infreq(species))) + 
+  geom_bar()
+```
+
+Visualize a histogram of a continuous variable:
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 200)
+```
+
+Plot different binwidths to reveal the shape of the distribution:
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 20)
+ggplot(penguins, aes(x = body_mass_g)) +
+  geom_histogram(binwidth=2000)
+```
+
+Plot a density plot. It shows fewer details but can be helpful for seeing the overall distribution shape including modes and skewness.
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = body_mass_g)) +
+  geom_density()
+```
+
 ```{r}
 library(tswge)
 walmart = read.csv(file.choose(), header = TRUE)

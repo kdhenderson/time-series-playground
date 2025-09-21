@@ -168,6 +168,18 @@ ggplot(penguins, aes(x = body_mass_g, color = species, fill = species)) +
   geom_density(alpha = 0.5)
 ```
 
+Create stacked bar plots to visualize the relationship between 2 categorical variables.
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = island, fill = species)) +
+  geom_bar()
+```
+
+Use position = "fill" to create a relative frequency plot to compare species distributions across islands.
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = island, fill = species)) +
+  geom_bar(position = "fill")
+```
+
 ```{r}
 library(tswge)
 walmart = read.csv(file.choose(), header = TRUE)

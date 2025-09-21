@@ -151,6 +151,23 @@ ggplot(penguins, aes(x = body_mass_g)) +
   geom_density()
 ```
 
+We can use side-by-side boxplots to visualize relationships between a numerical and categorical variable.
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = species, y = body_mass_g)) +
+  geom_boxplot()
+```
+Or we can compare distributions with density plots.
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = body_mass_g, color = species)) +
+  geom_density(linewidth = 0.75)
+```
+
+This is the same plot using fill and alpha. Here we map species to the color and fill aesthetics, and we set the value of the alpha aesthetic.
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = body_mass_g, color = species, fill = species)) + 
+  geom_density(alpha = 0.5)
+```
+
 ```{r}
 library(tswge)
 walmart = read.csv(file.choose(), header = TRUE)

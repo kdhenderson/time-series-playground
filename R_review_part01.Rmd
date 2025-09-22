@@ -180,6 +180,25 @@ ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(position = "fill")
 ```
 
+Scatterplot as for visualizing the relationship between two numerical variables
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) + 
+  geom_point()
+```
+
+Incorporate more variables by mapping them to additional aesthetics, though this is a cluttered way to do it.
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) + 
+  geom_point(aes(color = species, shape = island))
+```
+
+Split plot into facets to reduce clutter, by passing a categorical variable to facet_wrap().
+```{r message=F, warning=F}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species, shape = species)) +
+  facet_wrap(~island)
+```
+
 ```{r}
 library(tswge)
 walmart = read.csv(file.choose(), header = TRUE)

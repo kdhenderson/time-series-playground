@@ -205,19 +205,3 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point()
 ggsave(filename = 'penguin-plot.png')
 ```
-
-```{r}
-library(tswge)
-walmart = read.csv(file.choose(), header = TRUE)
-Stor8Item1 = walmart %>% filter(item == 1 & store == 8)
-head(walmart)
-plotts.wge(Stor8Item1$sales)
-acf(Stor8Item1$sales)
-```
-
-```{r}
-#truncation 400
-acf(Stor8Item1$sales)
-parzen.wge(walmart$sales)
-```
-

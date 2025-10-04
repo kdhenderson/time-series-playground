@@ -1,0 +1,43 @@
+---
+title: "R_review_part02"
+author: "Kristin Henderson"
+date: "2025-08-26"
+output: html_document
+---
+
+This review is based on the book: https://r4ds.hadley.nz/
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Basics
+
+Basic calculations
+```{r}
+1 / 200 *30
+(59 + 73 + 2) / 3
+sin(pi / 2)
+```
+
+Create new objects with assignment operator
+```{r}
+x <- 3 * 4
+# or
+y = 4 * 5
+print(x)
+print(y)
+```
+
+Combine multiple items into a vector
+```{r}
+primes = c(2, 3, 5, 7, 11, 13)
+print(primes)
+```
+
+Basic arithmetic on vector is applied element-wise
+```{r}
+primes * 2
+primes - 1
+```
